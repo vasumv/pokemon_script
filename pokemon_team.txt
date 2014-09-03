@@ -1,0 +1,55 @@
+Smeargle @ Power Herb
+Ability: Own Tempo
+EVs: 252 HP / 4 SpD / 252 Spe
+Timid Nature
+- Dark Void
+- Geomancy
+- Baton Pass
+- Cotton Guard
+
+Diglett @ Focus Sash
+Ability: Arena Trap
+EVs: 4 HP / 252 Atk / 252 Spe
+Jolly Nature
+- Earthquake
+- Reversal
+- Stealth Rock
+- Memento
+
+Dugtrio @ Focus Sash
+Ability: Arena Trap
+EVs: 4 HP / 252 Atk / 252 Spe
+Jolly Nature
+- Earthquake
+- Reversal
+- Stealth Rock
+- Memento
+
+Clefable @ Leftovers
+Ability: Unaware
+EVs: 252 HP / 252 Def / 4 SpD
+Bold Nature
+- Calm Mind
+- Stored Power
+- Moonblast
+- Substitute
+
+Espeon @ Leftovers
+Ability: Magic Bounce
+EVs: 252 HP / 252 Def
+Bold Nature
+- Calm Mind
+- Stored Power
+- Hidden Power [Fighting]
+- Substitute
+
+Sableye @ Mental Herb
+Ability: Prankster
+EVs: 252 HP / 4 Atk / 252 SpD
+Careful Nature
+- Taunt
+- Knock Off
+- Gravity
+- Will-O-Wisp
+
+

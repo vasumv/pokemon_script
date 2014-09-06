@@ -120,6 +120,8 @@ def wait_for_move():
 
 def sub_exists():
     return 0
+
+login("asdf5555")
 make_move(team)
 login("asdf5555")
 start_battle()

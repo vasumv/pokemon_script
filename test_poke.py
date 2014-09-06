@@ -110,18 +110,27 @@ def check_exists_by_xpath(xpath):
         return False
     return True
 
+def check_exists_by_name(name):
+    try:
+        driver.find_element_by_name(name)
+    except NoSuchElementException:
+        return False
+    return True
+
 def wait_for_move():
-    time_exists = check_exists_by_xpath("/html/body/div[6]/div[5]/div/p[2]/button")
-    print time_exists
+    time_exists = check_exists_by_name("setTimer")
     while time_exists:
-        time.sleep(1)
-        time_exists = check_exists_by_xpath("/html/body/div[6]/div[5]/div/p[2]/button")
+        time.sleep(2)
+        time_exists = check_exists_by_name("setTimer")
     return 0
 
 def sub_exists():
     return 0
 
+
+
 login("asdf5555")
+time_exists = check_exists_by_name("setTimer")
 make_team(team)
 login("asdf5555")
 start_battle()

@@ -95,9 +95,12 @@ def get_team():
     return team_list
 
 def get_hp():
-    hp_text = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/div/div[1]")
-    hp = hp_text.text.strip("%")
-    hp = int(hp)
+    if check_exists_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/div/div[1]") == True:
+        hp_text = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/div/div[1]")
+        hp = hp_text.text.strip("%")
+        hp = int(hp)
+    else:
+        hp = 0
     return hp
 
 def get_log():
@@ -147,7 +150,6 @@ if curr_hp > 60:
     while curr_hp > 60:
         print "used knock off"
         make_move("Knock Off")
-        wait_for_move()
         curr_hp = get_hp()
         log = get_log()
         if "Sableye fainted" in log:
@@ -158,7 +160,6 @@ time.sleep(5)
 while curr_hp > 0:
     print "used knock off"
     make_move("Knock Off")
-    wait_for_move()
     curr_hp = get_hp()
     log = get_log()
     if "Sableye fainted" in log:

@@ -122,7 +122,7 @@ def sub_exists():
     return 0
 
 login("asdf5555")
-make_move(team)
+make_team(team)
 login("asdf5555")
 start_battle()
 time.sleep(10)

@@ -69,6 +69,7 @@ def switch_poke(poke):
         choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[6]")
         choose.click()
     wait_for_move()
+    time.sleep(3)
 
 def make_move(move):
     if move == "Taunt" or move == "Calm Mind"  or move == "Dark Void"  or move == "Earthquake":
@@ -120,14 +121,14 @@ def check_exists_by_name(name):
 def wait_for_move():
     time_exists = check_exists_by_name("setTimer")
     while time_exists:
+        print "waiting for their move"
         time.sleep(2)
         time_exists = check_exists_by_name("setTimer")
-    return 0
+    print "their move just ended"
+    time.sleep(5)
 
 def sub_exists():
     return 0
-
-
 
 login("asdf5555")
 time_exists = check_exists_by_name("setTimer")
@@ -137,18 +138,35 @@ start_battle()
 time.sleep(10)
 opp_team = get_team()
 switch_poke("Sableye")
-time.sleep(10)
+print "used taunt"
 make_move("Taunt")
 curr_hp = get_hp()
 while curr_hp > 60:
+    print "used knock off"
     make_move("Knock Off")
     wait_for_move()
     curr_hp = get_hp()
+    log = get_log()
+    if "Sableye fainted" in log:
+        print "Sableye fainted"
+        break
 make_move("Gravity")
+while curr_hp > 0:
+    print "used knock off"
+    make_move("Knock Off")
+    wait_for_move()
+    curr_hp = get_hp()
+    log = get_log()
+    if "Sableye fainted" in log:
+        print "Sableye fainted"
+        break
+print "switching to diglett"
 switch_poke("Diglett")
 make_move("Memento")
+print "switching to dugtrio"
 switch_poke("Dugtrio")
 make_move("Memento")
+print "switching to smeargle"
 switch_poke("Smeargle")
 make_move("Geomancy")
 make_move("Cotton Guard")

@@ -68,6 +68,7 @@ def switch_poke(poke):
     elif poke == "Sableye":
         choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[6]")
         choose.click()
+    wait_for_move()
 
 def make_move(move):
     if move == "Taunt" or move == "Calm Mind"  or move == "Dark Void"  or move == "Earthquake":
@@ -82,6 +83,7 @@ def make_move(move):
     elif move == "Memento" or move == "Will-O-Wisp"  or move == "Substitute"  or move == "Cotton Guard":
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]")
         move.click()
+    wait_for_move()
     time.sleep(3)
 
 def get_team():
@@ -115,8 +117,10 @@ def wait_for_move():
         time.sleep(1)
         time_exists = check_exists_by_xpath("/html/body/div[6]/div[5]/div/p[2]/button")
     return 0
-login("asdf5555")
-make_team(team)
+
+def sub_exists():
+    return 0
+make_move(team)
 login("asdf5555")
 start_battle()
 time.sleep(10)
@@ -124,12 +128,26 @@ opp_team = get_team()
 switch_poke("Sableye")
 time.sleep(10)
 make_move("Taunt")
-wait_for_move()
 curr_hp = get_hp()
 while curr_hp > 60:
     make_move("Knock Off")
     wait_for_move()
     curr_hp = get_hp()
 make_move("Gravity")
-wait_for_move()
+switch_poke("Diglett")
+make_move("Memento")
+switch_poke("Dugtrio")
+make_move("Memento")
+switch_poke("Smeargle")
+make_move("Geomancy")
+make_move("Cotton Guard")
+make_move("Baton Pass")
+if "Mandibuzz" in opp_team:
+    switch_poke("Clefable")
+    make_move("Substitute")
+
+else:
+    switch_poke("Espeon")
+
+
 

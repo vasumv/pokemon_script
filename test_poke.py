@@ -140,17 +140,21 @@ opp_team = get_team()
 switch_poke("Sableye")
 print "used taunt"
 make_move("Taunt")
+time.sleep(5)
 curr_hp = get_hp()
-while curr_hp > 60:
-    print "used knock off"
-    make_move("Knock Off")
-    wait_for_move()
-    curr_hp = get_hp()
-    log = get_log()
-    if "Sableye fainted" in log:
-        print "Sableye fainted"
-        break
+print curr_hp
+if curr_hp > 60:
+    while curr_hp > 60:
+        print "used knock off"
+        make_move("Knock Off")
+        wait_for_move()
+        curr_hp = get_hp()
+        log = get_log()
+        if "Sableye fainted" in log:
+            print "Sableye fainted"
+            break
 make_move("Gravity")
+time.sleep(5)
 while curr_hp > 0:
     print "used knock off"
     make_move("Knock Off")

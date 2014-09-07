@@ -162,7 +162,8 @@ time.sleep(5)
 #print "opp poke: " + opp_poke
 curr_hp = get_hp()
 print curr_hp
-if curr_hp > 60:
+log = get_log()
+if curr_hp > 60 and "Sableye fainted" not in log:
     while curr_hp > 60:
         print "used knock off"
         make_move("Knock Off")
@@ -176,7 +177,7 @@ log = get_log()
 if "Sableye fainted" not in log:
     make_move("Gravity")
 time.sleep(5)
-while curr_hp > 0 or "Sableye fainted" not in log:
+while curr_hp > 0 and "Sableye fainted" not in log:
     print "used knock off"
     make_move("Knock Off")
     curr_hp = get_hp()

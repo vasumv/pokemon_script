@@ -97,8 +97,8 @@ def get_team():
     return team_list
 
 def get_hp():
-    if check_exists_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/div/div[1]") == True:
-        hp_text = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/div/div[1]")
+    if check_exists_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/div/div[1]") == True:
+        hp_text = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/div/div[1]")
         hp = hp_text.text.strip("%")
         hp = int(hp)
     else:
@@ -205,11 +205,12 @@ if "Mandibuzz" in opp_team:
 
 else:
     switch_poke("Espeon")
-    make_move("Substitute")
+    #make_move("Substitute")
     time.sleep(5)
     log = get_log()
-    sub = check_sub()
+    #sub = check_sub()
     hp = get_hp()
+    '''
     while hp > 30:
         if sub():
             while sub:
@@ -217,5 +218,7 @@ else:
                 log = get_log()
                 sub = check_sub()
         make_move("Substitute")
-
+    '''
+    while True:
+        make_move("Stored Power")
 

@@ -158,8 +158,8 @@ switch_poke("Sableye")
 print "used taunt"
 make_move("Taunt")
 time.sleep(5)
-opp_poke = get_opp_poke()
-print "opp poke: " + opp_poke
+#opp_poke = get_opp_poke()
+#print "opp poke: " + opp_poke
 curr_hp = get_hp()
 print curr_hp
 if curr_hp > 60:
@@ -195,6 +195,7 @@ switch_poke("Smeargle")
 print "using Geomancy"
 make_move("Geomancy")
 print "using cotton guard"
+time.sleep(3)
 make_move("Cotton Guard")
 print "using baton pass"
 make_move("Baton Pass")

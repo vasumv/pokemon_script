@@ -5,8 +5,10 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
 chromePath = "/home/vasu/Downloads/chromedriver"
 url = "http://play.pokemonshowdown.com"
-f = open("/home/vasu/Work/pokemon_stuff/pokemon_team")
+f = open("/home/vasu/Work/pokemon_stuff/pokemon_team.txt")
+f2 = open("/home/vasu/Work/pokemon_stuff/darkpokes.txt")
 team = f.read()
+dark_pokes = f2.read()
 username = "asdf5555"
 driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)
@@ -51,7 +53,7 @@ def start_battle():
 
 def switch_poke(poke):
     if poke == "Smeargle":
-        choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
+        choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]")
         choose.click()
     elif poke == "Diglett":
         choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[2]")
@@ -60,13 +62,13 @@ def switch_poke(poke):
         choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[3]")
         choose.click()
     elif poke == "Clefable":
-        choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]")
-        choose.click()
-    elif poke == "Espeon":
         choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[5]")
         choose.click()
-    elif poke == "Sableye":
+    elif poke == "Espeon":
         choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[6]")
+        choose.click()
+    elif poke == "Sableye":
+        choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
         choose.click()
     wait_for_move()
     time.sleep(3)
@@ -85,7 +87,7 @@ def make_move(move):
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]")
         move.click()
     wait_for_move()
-    time.sleep(3)
+    time.sleep(5)
 
 def get_team():
     team = driver.find_element_by_xpath("/html/body/div[4]/div[3]/div[1]/div[15]/em")
@@ -130,8 +132,20 @@ def wait_for_move():
     print "their move just ended"
     time.sleep(5)
 
-def sub_exists():
-    return 0
+def check_sub():
+    img = driver.find_element_by_xpath("/html/body/div[5]/div[1]/div/div[4]/div[4]/img[1]")
+    text = img.text
+    if "opacity: 1" in text:
+        return False
+    else:
+        return True
+
+def get_opp_poke():
+    opp_poke = driver.find_element_by_xpath("/html/body/div[4]/div[2]/div[2]")
+    text = opp_poke.text
+    #text = text.split("p1: ")[1]
+    #text = text.split(",")[0]
+    return text
 
 login("asdf5555")
 time_exists = check_exists_by_name("setTimer")
@@ -144,6 +158,8 @@ switch_poke("Sableye")
 print "used taunt"
 make_move("Taunt")
 time.sleep(5)
+opp_poke = get_opp_poke()
+print "opp poke: " + opp_poke
 curr_hp = get_hp()
 print curr_hp
 if curr_hp > 60:
@@ -151,13 +167,16 @@ if curr_hp > 60:
         print "used knock off"
         make_move("Knock Off")
         curr_hp = get_hp()
+        print curr_hp
         log = get_log()
-        if "Sableye fainted" in log:
+        if curr_hp == 0 and "Sableye fainted" in log:
             print "Sableye fainted"
             break
-make_move("Gravity")
+log = get_log()
+if "Sableye fainted" not in log:
+    make_move("Gravity")
 time.sleep(5)
-while curr_hp > 0:
+while curr_hp > 0 or "Sableye fainted" not in log:
     print "used knock off"
     make_move("Knock Off")
     curr_hp = get_hp()
@@ -173,8 +192,11 @@ switch_poke("Dugtrio")
 make_move("Memento")
 print "switching to smeargle"
 switch_poke("Smeargle")
+print "using Geomancy"
 make_move("Geomancy")
+print "using cotton guard"
 make_move("Cotton Guard")
+print "using baton pass"
 make_move("Baton Pass")
 if "Mandibuzz" in opp_team:
     switch_poke("Clefable")
@@ -182,6 +204,17 @@ if "Mandibuzz" in opp_team:
 
 else:
     switch_poke("Espeon")
-
+    make_move("Substitute")
+    time.sleep(5)
+    log = get_log()
+    sub = check_sub()
+    hp = get_hp()
+    while hp > 30:
+        if sub():
+            while sub:
+                make_move("Stored Power")
+                log = get_log()
+                sub = check_sub()
+        make_move("Substitute")
 
 

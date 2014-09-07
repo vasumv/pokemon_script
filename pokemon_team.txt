@@ -1,11 +1,11 @@
-Smeargle @ Power Herb
-Ability: Own Tempo
-EVs: 252 HP / 4 SpD / 252 Spe
-Timid Nature
-- Dark Void
-- Geomancy
-- Baton Pass
-- Cotton Guard
+Sableye @ Mental Herb
+Ability: Prankster
+EVs: 252 HP / 4 Atk / 252 SpD
+Careful Nature
+- Taunt
+- Knock Off
+- Gravity
+- Will-O-Wisp
 
 Diglett @ Focus Sash
 Ability: Arena Trap
@@ -25,6 +25,15 @@ Jolly Nature
 - Stealth Rock
 - Memento
 
+Smeargle @ Power Herb
+Ability: Own Tempo
+EVs: 252 HP / 4 SpD / 252 Spe
+Timid Nature
+- Dark Void
+- Geomancy
+- Baton Pass
+- Cotton Guard
+
 Clefable @ Leftovers
 Ability: Unaware
 EVs: 252 HP / 252 Def / 4 SpD
@@ -43,13 +52,5 @@ Bold Nature
 - Hidden Power [Fighting]
 - Substitute
 
-Sableye @ Mental Herb
-Ability: Prankster
-EVs: 252 HP / 4 Atk / 252 SpD
-Careful Nature
-- Taunt
-- Knock Off
-- Gravity
-- Will-O-Wisp
 
 

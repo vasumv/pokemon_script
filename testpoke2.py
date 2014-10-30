@@ -120,7 +120,7 @@ def get_log():
 def get_player_number():
     player = driver.find_element_by_xpath("/html/body/div[4]/div[3]/div[1]/div[1]/small")
     print player.text
-    if "asdf5555" in player.text:
+    if username in player.text:
         return 1
     else:
         return 2
@@ -171,7 +171,7 @@ def wait_for_move():
     print "their move just ended"
     time.sleep(5)
 
-login("asdf5556")
+login(username)
 time_exists = check_exists_by_name("setTimer")
 make_team(team)
 login("asdf5556")

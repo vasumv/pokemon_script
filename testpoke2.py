@@ -141,6 +141,8 @@ def get_opp_poke(oppTeam):
     text = img.get_attribute('src')
     back = text.rindex('.')
     poke = text[46:back]
+    if "shiny" in poke:
+        poke = poke[6:]
     return poke
 
 def check_sub():
@@ -169,10 +171,10 @@ def wait_for_move():
     print "their move just ended"
     time.sleep(5)
 
-login("asdf5555")
+login("asdf5556")
 time_exists = check_exists_by_name("setTimer")
 make_team(team)
-login("asdf5555")
+login("asdf5556")
 start_battle()
 time.sleep(10)
 team = get_team()

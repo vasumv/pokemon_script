@@ -52,3 +52,7 @@ pangoro
 inkay
 malamar
 yveltal
+tyranitar-mega
+absol-mega
+sharpedo-mega
+gyarados-mega

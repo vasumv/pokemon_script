@@ -6,3 +6,4 @@ breloom
 mienshao
 hawlucha
 scizor
+diancie

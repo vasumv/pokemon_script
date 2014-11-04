@@ -1,5 +1,4 @@
 import time
-import os
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
@@ -13,7 +12,7 @@ f3 = open("/home/vasu/Work/pokemon_stuff/threats.txt")
 threats = f3.read()
 f4 = open("/home/vasu/Work/pokemon_stuff/darkthreats.txt")
 dark_threats = f4.read()
-username = "asdf5556"
+username = "asdf5555"
 driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)
 
@@ -26,6 +25,10 @@ def login(username):
     user.send_keys(username)
     user.send_keys(Keys.RETURN)
     time.sleep(1)
+
+def off_sound():
+    sound = driver.find_element_by_xpath("/html/body/div[6]/p[3]/label/input")
+    sound.click()
 
 def make_team(team):
     builder = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[2]/p[1]/button")
@@ -74,8 +77,9 @@ def switch_poke(poke):
     elif poke == "Sableye":
         choose = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
         choose.click()
+    time.sleep(2)
+    start_timer()
     wait_for_move()
-    time.sleep(3)
 
 def make_move(move):
     if move == "Taunt" or move == "Calm Mind"  or move == "Dark Void"  or move == "Earthquake":
@@ -90,6 +94,8 @@ def make_move(move):
     elif move == "Memento" or move == "Will-O-Wisp"  or move == "Substitute"  or move == "Cotton Guard":
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]")
         move.click()
+    time.sleep(2)
+    start_timer()
     wait_for_move()
     time.sleep(3)
 
@@ -155,6 +161,13 @@ def check_exists_by_xpath(xpath):
         return False
     return True
 
+def check_exists_by_class_name(name):
+    try:
+        driver.find_element_by_class_name(name)
+    except NoSuchElementException:
+        return False
+    return True
+
 def check_exists_by_name(name):
     try:
         driver.find_element_by_name(name)
@@ -162,129 +175,146 @@ def check_exists_by_name(name):
         return False
     return True
 
+def start_timer():
+    if check_exists_by_xpath("/html/body/div[4]/div[5]/div/p[2]/button"):
+        timer = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/p[2]/button")
+        if timer.text == "Start timer":
+            timer.click()
+
+def check_taunt():
+    return None
+
 def wait_for_move():
-    time_exists = check_exists_by_name("setTimer")
-    while time_exists:
+    move_exists = check_exists_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
+    while move_exists == False:
         print "waiting for their move"
         time.sleep(2)
-        time_exists = check_exists_by_name("setTimer")
+        move_exists = check_exists_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
+        if check_exists_by_xpath("/html/body/div[4]/div[5]/div/p[1]/em/button[2]"):
+            save_replay = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/p[1]/em/button[2]")
+            save_replay.click()
+            cancel_exists = check_exists_by_name("close")
+            while cancel_exists == False:
+                time.sleep(1)
+                cancel_exists = check_exists_by_name("close")
+            cancel = driver.find_element_by_name("close")
+            cancel.click()
+            close = driver.find_element_by_name("closebutton")
+            close.click()
+            run()
+
     print "their move just ended"
-    time.sleep(5)
 
 login(username)
-time_exists = check_exists_by_name("setTimer")
 make_team(team)
-login("asdf5556")
-start_battle()
-time.sleep(10)
-team = get_team()
-opp_team = [x.encode('ascii','ignore').strip() for x in team]
-print type(opp_team)
-print opp_team
-player = get_player_number()
-print "i am player " + str(player)
-switch_poke("Sableye")
-opp_poke = get_opp_poke(opp_team)
-print opp_poke
-print "used taunt"
-make_move("Taunt")
-time.sleep(5)
-curr_hp = get_hp()
-print curr_hp
-if curr_hp > 60:
-    while curr_hp > 60:
-        print "used knock off"
-        make_move("Knock Off")
-        curr_hp = get_hp()
-        print curr_hp
-        log = get_log()
-        if curr_hp == 0 and "Sableye fainted" in log:
-            print "Sableye fainted"
-            break
-log = get_log();
-if "Sableye fainted" not in log:
-    wait_for_move()
-    make_move("Gravity")
-time.sleep(5)
-while curr_hp > 0 or "Sableye fainted" not in log:
+login(username)
+def run():
+    start_battle()
+    time.sleep(10)
+    team = get_team()
+    opp_team = [x.encode('ascii','ignore').strip() for x in team]
+    print opp_team
+    player = get_player_number()
+    print "i am player " + str(player)
+    switch_poke("Sableye")
     print "used taunt"
     make_move("Taunt")
+    #taunt = check_taunt()
+    #print "Taunt is " + taunt
+    time.sleep(5)
     curr_hp = get_hp()
-    log = get_log()
-    if "Sableye fainted" in log:
-        print "Sableye fainted"
-        break
-print "switching to diglett"
-switch_poke("Diglett")
-make_move("Memento")
-print "switching to dugtrio"
-switch_poke("Dugtrio")
-make_move("Memento")
-print "switching to smeargle"
-switch_poke("Smeargle")
-make_move("Geomancy")
-print "using Geomancy"
-if get_opp_poke(opp_team) in threats:
-    print "i see threat"
-    make_move("Dark Void")
-make_move("Cotton Guard")
-print "using cotton guard"
-make_move("Baton Pass")
-print "using baton pass"
+    print curr_hp
+    if curr_hp > 60:
+        while curr_hp > 60:
+            print "used knock off"
+            make_move("Knock Off")
+            curr_hp = get_hp()
+            print curr_hp
+            log = get_log()
+            if curr_hp == 0 and "Sableye fainted" in log:
+                print "Sableye fainted"
+                break
+    log = get_log();
+    if "Sableye fainted" not in log:
+        wait_for_move()
+        make_move("Gravity")
+    time.sleep(5)
+    while curr_hp > 0 or "Sableye fainted" not in log:
+        print "used taunt"
+        make_move("Taunt")
+        curr_hp = get_hp()
+        log = get_log()
+        if "Sableye fainted" in log:
+            print "Sableye fainted"
+            break
+    print "switching to diglett"
+    switch_poke("Diglett")
+    make_move("Memento")
+    print "switching to dugtrio"
+    switch_poke("Dugtrio")
+    make_move("Memento")
+    print "switching to smeargle"
+    switch_poke("Smeargle")
+    make_move("Geomancy")
+    print "using Geomancy"
+    if get_opp_poke(opp_team) in threats:
+        print "i see threat"
+        make_move("Dark Void")
+    make_move("Cotton Guard")
+    print "using cotton guard"
+    make_move("Baton Pass")
+    print "using baton pass"
 
-if any(x in dark_threats for x in opp_team):
-    print "hello there's a mandibuzz in their team"
-    switch_poke("Clefable")
-    while True:
-        time.sleep(5)
-        print get_opp_poke(opp_team)
-        if get_opp_poke(opp_team) not in darkpokes:
-            print "this is not a dark poke"
-            make_move("Stored Power")
-            time.sleep(5)
-            wait_for_move();
-        else:
-            print "this is a dark poke"
-            make_move("Moonblast")
-            time.sleep(5)
-            wait_for_move();
+    if any(x in dark_threats for x in opp_team):
+        print "hello there's a darkthreat in their team"
+        switch_poke("Clefable")
+        make_move("Substitute")
+        while True:
+            print get_opp_poke(opp_team)
+            if get_opp_poke(opp_team) not in darkpokes:
+                print "this is not a dark poke"
+                make_move("Stored Power")
+                wait_for_move();
+            else:
+                print "this is a dark poke"
+                make_move("Moonblast")
+                wait_for_move();
 
-else:
-    switch_poke("Espeon")
-    hp = get_hp()
-    log = get_log()
+    else:
+        switch_poke("Espeon")
+        hp = get_hp()
+        log = get_log()
+        make_move("Substitute")
 
-    '''
-    FINAL LOGIC: UNFINISHED
-    while True:
-        while hp > 40:
-            if check_sub() == False:
-                make_move("Substitute")
-                time.sleep(3)
-                if check_sub() == True:
+        '''
+        FINAL LOGIC: UNFINISHED
+        while True:
+            while hp > 40:
+                if check_sub() == False:
+                    make_move("Substitute")
+                    time.sleep(3)
+                    if check_sub() == True:
+                        if get_opp_poke(opp_team) not in darkpokes:
+                            make_move("Stored Power")
+                        else:
+                            make_move("Hidden Power Fighting")
+                    else:
+                else:
                     if get_opp_poke(opp_team) not in darkpokes:
                         make_move("Stored Power")
                     else:
                         make_move("Hidden Power Fighting")
-                else:
+            '''
+        #TEST LOGIC:
+        while True:
+            print get_opp_poke(opp_team)
+            if get_opp_poke(opp_team) not in darkpokes:
+                print "this is not a dark poke"
+                make_move("Stored Power")
+                wait_for_move();
             else:
-                if get_opp_poke(opp_team) not in darkpokes:
-                    make_move("Stored Power")
-                else:
-                    make_move("Hidden Power Fighting")
-        '''
-    #TEST LOGIC:
-    while True:
-        time.sleep(5)
-        print get_opp_poke(opp_team)
-        if get_opp_poke(opp_team) not in darkpokes:
-            print "this is not a dark poke"
-            make_move("Stored Power")
-            time.sleep(5)
-            wait_for_move();
-        else:
-            print "this is a dark poke"
-            make_move("Hidden Power Fighting")
-            time.sleep(5)
-            wait_for_move();
+                print "this is a dark poke"
+                make_move("Hidden Power Fighting")
+                wait_for_move();
 
+run()

@@ -1,4 +1,4 @@
-Sableye @ Mental Herb
+bot1 (Sableye) @ Mental Herb
 Ability: Prankster
 EVs: 252 HP / 4 Atk / 252 SpD
 Careful Nature
@@ -7,7 +7,7 @@ Careful Nature
 - Gravity
 - Will-O-Wisp
 
-Diglett @ Focus Sash
+bot2 (Diglett) @ Focus Sash
 Ability: Arena Trap
 EVs: 4 HP / 252 Atk / 252 Spe
 Jolly Nature
@@ -16,7 +16,7 @@ Jolly Nature
 - Stealth Rock
 - Memento
 
-Dugtrio @ Focus Sash
+bot3 (Dugtrio) @ Focus Sash
 Ability: Arena Trap
 EVs: 4 HP / 252 Atk / 252 Spe
 Jolly Nature
@@ -25,7 +25,7 @@ Jolly Nature
 - Stealth Rock
 - Memento
 
-Smeargle @ Power Herb
+bot4 (Smeargle) @ Power Herb
 Ability: Own Tempo
 EVs: 252 HP / 4 SpD / 252 Spe
 Timid Nature
@@ -34,7 +34,7 @@ Timid Nature
 - Baton Pass
 - Cotton Guard
 
-Clefable @ Leftovers
+bot5 (Clefable) @ Leftovers
 Ability: Unaware
 EVs: 252 HP / 252 Def / 4 SpD
 Bold Nature
@@ -43,7 +43,7 @@ Bold Nature
 - Moonblast
 - Substitute
 
-Espeon @ Leftovers
+bot6 (Espeon) @ Leftovers
 Ability: Magic Bounce
 EVs: 252 HP / 252 Def
 Bold Nature

@@ -81,7 +81,6 @@ def switch_poke(poke):
     wait_for_move()
 
 def make_move(move):
-    log = get_log()
     if move == "Taunt" or move == "Calm Mind"  or move == "Dark Void"  or move == "Earthquake" or move == "Morning Sun":
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
         move.click()
@@ -196,6 +195,10 @@ class FinishedException(Exception):
     def __init__(self, won):
         self.won = won
 
+class LostException():
+    def __init__(self, lost):
+        self.lost = lost
+
 def wait_for_move():
     move_exists = check_exists_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
     while move_exists == False:
@@ -237,20 +240,20 @@ def run(driver):
             curr_hp = get_hp()
             print curr_hp
             log = get_log()
-            if curr_hp == 0 and "Sableye fainted" in log:
+            if curr_hp == 0 and "bot1 fainted" in log:
                 print "Sableye fainted"
                 break
     log = get_log();
-    if "Sableye fainted" not in log:
+    if "bot1 fainted" not in log:
         wait_for_move()
         make_move("Gravity")
     time.sleep(5)
-    while curr_hp > 0 or "Sableye fainted" not in log:
+    while curr_hp > 0 or "bot1 fainted" not in log:
         print "used taunt"
         make_move("Taunt")
         curr_hp = get_hp()
         log = get_log()
-        if "Sableye fainted" in log:
+        if "bot1 fainted" in log:
             print "Sableye fainted"
             break
     print "switching to diglett"
@@ -263,10 +266,10 @@ def run(driver):
             make_move("Earthquake")
             opp_poke = get_opp_poke(opp_team)
             log = get_log()
-            if "Diglett fainted" in log:
+            if "bot2 fainted" in log:
                 print "Diglett fainted"
                 break
-    if "Diglett fainted" not in log:
+    if "bot2 fainted" not in log:
         make_move("Memento")
     print "switching to dugtrio"
     switch_poke("Dugtrio")
@@ -278,22 +281,33 @@ def run(driver):
             make_move("Earthquake")
             opp_poke = get_opp_poke(opp_team)
             log = get_log()
-            if "Dugtrio fainted" in log:
+            if "bot3 fainted" in log:
                 print "Dugtrio fainted"
                 break
-    if "Dugtrio fainted" not in log:
+    if "bot3 fainted" not in log:
         make_move("Memento")
     print "switching to smeargle"
     switch_poke("Smeargle")
     make_move("Geomancy")
     print "using Geomancy"
+    log = get_log()
+    if "bot4 fainted" in log:
+        raise FinishedException(False)
+    log = get_log()
     if get_opp_poke(opp_team) in threats:
         print "i see threat"
         make_move("Dark Void")
+        log = get_log()
     make_move("Cotton Guard")
     print "using cotton guard"
+    log = get_log()
+    if "bot4 fainted" in log:
+        raise FinishedException(False)
     make_move("Baton Pass")
     print "using baton pass"
+    log = get_log()
+    if "bot4 fainted" in log:
+        raise FinishedException(False)
 
     if any(x in dark_threats for x in opp_team):
         print "hello there's a darkthreat in their team"
@@ -337,6 +351,9 @@ def run(driver):
             '''
         #TEST LOGIC:
         while True:
+            log = get_log()
+            if "bot6 fainted" in log:
+                raise FinishedException(False)
             sub = check_sub()
             print "sub is up: " + str(sub)
             hp = get_hp()
@@ -344,7 +361,7 @@ def run(driver):
                 while(sub):
                     print get_opp_poke(opp_team)
                     hp = get_hp()
-                    if get_opp_poke(opp_team) not in darkpokes:
+                    if get_opp_poke(opp_team) not in darkpokes or get_opp_poke(opp_team) == "gyarados":
                         print "this is not a dark poke"
                         print "my hp is " + str(hp)
                         if hp < 50:

@@ -34,3 +34,4 @@ charizard
 chesnaught
 pinsir
 pinsir-mega
+bisharp

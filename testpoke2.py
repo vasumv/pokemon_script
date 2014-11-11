@@ -389,12 +389,12 @@ driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)
 login(username)
 make_team(team)
-with open("wins", "a") as f:
+with open("asdf5556wins", "a") as f:
     while True:
         try:
             run(driver)
         except FinishedException as e:
-            print "Actually won (or forfeited)"
+            print "Actually won (or smeargle/espeon died)"
             won = e.won
         except Exception as e:
             print traceback.format_exc()

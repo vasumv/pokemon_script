@@ -1,5 +1,6 @@
 keldeo
 breloom
+vaporeon
 terrakion
 medicham-mega
 breloom
@@ -23,3 +24,13 @@ machamp
 infernape
 mamoswine
 tyranitar
+toxicroak
+salamence
+gothitelle
+venusaur
+venusaur-mega
+serperior
+charizard
+chesnaught
+pinsir
+pinsir-mega

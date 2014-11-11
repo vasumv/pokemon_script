@@ -47,7 +47,7 @@ Espeon @ Leftovers
 Ability: Magic Bounce
 EVs: 252 HP / 252 Def
 Bold Nature
-- Calm Mind
+- Morning Sun
 - Stored Power
 - Hidden Power [Fighting]
 - Substitute

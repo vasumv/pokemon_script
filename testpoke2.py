@@ -1,3 +1,4 @@
+import traceback
 import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
@@ -12,9 +13,7 @@ f3 = open("/home/vasu/Work/pokemon_stuff/threats.txt")
 threats = f3.read()
 f4 = open("/home/vasu/Work/pokemon_stuff/darkthreats.txt")
 dark_threats = f4.read()
-username = "asdf5555"
-driver = webdriver.Chrome(executable_path=chromePath)
-driver.get(url)
+username = "asdf5556"
 
 def login(username):
     time.sleep(1)
@@ -44,13 +43,13 @@ def make_team(team):
     save.click()
     driver.get(url)
     time.sleep(2)
+
+def start_battle():
+    url1 = driver.current_url
     form = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[1]/button")
     form.click()
     ou = driver.find_element_by_xpath("/html/body/div[4]/ul[1]/li[4]/button")
     ou.click()
-
-def start_battle():
-    url1 = driver.current_url
     battle = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[3]/button")
     battle.click()
     while url1 == driver.current_url:
@@ -82,7 +81,8 @@ def switch_poke(poke):
     wait_for_move()
 
 def make_move(move):
-    if move == "Taunt" or move == "Calm Mind"  or move == "Dark Void"  or move == "Earthquake":
+    log = get_log()
+    if move == "Taunt" or move == "Calm Mind"  or move == "Dark Void"  or move == "Earthquake" or move == "Morning Sun":
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
         move.click()
     elif move == "Geomancy" or move == "Reversal"  or move == "Stored Power"  or move == "Knock Off":
@@ -107,12 +107,8 @@ def get_team():
     return team_list
 
 def get_hp():
-    if check_exists_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/div/div[1]") == True and get_player_number() == 2:
-        hp_text = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[2]/div/div[1]")
-        hp = hp_text.text.strip("%")
-        hp = int(hp)
-    elif check_exists_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/div/div[1]") == True and get_player_number() == 1:
-        hp_text = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[1]/div/div[1]")
+    if check_exists_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[contains(@class,'statbar rstatbar')]/div/div[1]"):
+        hp_text = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[5]/div[contains(@class,'statbar rstatbar')]/div/div[1]")
         hp = hp_text.text.strip("%")
         hp = int(hp)
     else:
@@ -151,8 +147,20 @@ def get_opp_poke(oppTeam):
         poke = poke[6:]
     return poke
 
-def check_sub():
+def get_my_poke():
     return None
+
+def check_sub():
+    sub = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[4]/div[4]/img[1]")
+    sub_text = sub.get_attribute('style')
+    sub_text = sub_text[-2:-1]
+    opacity = int(sub_text)
+    print "my opacity is " + str(opacity)
+    if opacity > 1:
+        return True
+    else:
+        return False
+
 
 def check_exists_by_xpath(xpath):
     try:
@@ -184,6 +192,10 @@ def start_timer():
 def check_taunt():
     return None
 
+class FinishedException(Exception):
+    def __init__(self, won):
+        self.won = won
+
 def wait_for_move():
     move_exists = check_exists_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
     while move_exists == False:
@@ -193,30 +205,24 @@ def wait_for_move():
         if check_exists_by_xpath("/html/body/div[4]/div[5]/div/p[1]/em/button[2]"):
             save_replay = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/p[1]/em/button[2]")
             save_replay.click()
-            cancel_exists = check_exists_by_name("close")
-            while cancel_exists == False:
-                time.sleep(1)
-                cancel_exists = check_exists_by_name("close")
-            cancel = driver.find_element_by_name("close")
-            cancel.click()
-            close = driver.find_element_by_name("closebutton")
-            close.click()
-            run()
+            time.sleep(10)
+            raise FinishedException(True)
 
     print "their move just ended"
 
-login(username)
-make_team(team)
-login(username)
-def run():
+def run(driver):
+    driver.get(url)
+    login(username)
     start_battle()
     time.sleep(10)
-    team = get_team()
-    opp_team = [x.encode('ascii','ignore').strip() for x in team]
+    opponent_team = get_team()
+    opp_team = [x.encode('ascii','ignore').strip() for x in opponent_team]
     print opp_team
     player = get_player_number()
     print "i am player " + str(player)
     switch_poke("Sableye")
+    x = check_sub()
+    print x
     print "used taunt"
     make_move("Taunt")
     #taunt = check_taunt()
@@ -249,10 +255,34 @@ def run():
             break
     print "switching to diglett"
     switch_poke("Diglett")
-    make_move("Memento")
+    opp_poke = get_opp_poke(opp_team)
+    log = get_log()
+    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
+        print "i see threat, will use earthquake"
+        while opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
+            make_move("Earthquake")
+            opp_poke = get_opp_poke(opp_team)
+            log = get_log()
+            if "Diglett fainted" in log:
+                print "Diglett fainted"
+                break
+    if "Diglett fainted" not in log:
+        make_move("Memento")
     print "switching to dugtrio"
     switch_poke("Dugtrio")
-    make_move("Memento")
+    opp_poke = get_opp_poke(opp_team)
+    log = get_log()
+    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
+        print "i see threat, will use earthquake"
+        while opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
+            make_move("Earthquake")
+            opp_poke = get_opp_poke(opp_team)
+            log = get_log()
+            if "Dugtrio fainted" in log:
+                print "Dugtrio fainted"
+                break
+    if "Dugtrio fainted" not in log:
+        make_move("Memento")
     print "switching to smeargle"
     switch_poke("Smeargle")
     make_move("Geomancy")
@@ -307,14 +337,45 @@ def run():
             '''
         #TEST LOGIC:
         while True:
-            print get_opp_poke(opp_team)
-            if get_opp_poke(opp_team) not in darkpokes:
-                print "this is not a dark poke"
-                make_move("Stored Power")
-                wait_for_move();
+            sub = check_sub()
+            print "sub is up: " + str(sub)
+            hp = get_hp()
+            if(sub):
+                while(sub):
+                    print get_opp_poke(opp_team)
+                    hp = get_hp()
+                    if get_opp_poke(opp_team) not in darkpokes:
+                        print "this is not a dark poke"
+                        print "my hp is " + str(hp)
+                        if hp < 50:
+                            make_move("Morning Sun")
+                        else:
+                            make_move("Stored Power")
+                    else:
+                        print "this is a dark poke"
+                        print "my hp is " + str(hp)
+                        if hp < 50:
+                            make_move("Morning Sun")
+                        else:
+                            make_move("Hidden Power Fighting")
+                    sub = check_sub()
+            elif sub == False and hp > 50:
+                make_move("Substitute")
             else:
-                print "this is a dark poke"
-                make_move("Hidden Power Fighting")
-                wait_for_move();
-
-run()
+                make_move("Morning Sun")
+driver = webdriver.Chrome(executable_path=chromePath)
+driver.get(url)
+login(username)
+make_team(team)
+with open("wins", "a") as f:
+    while True:
+        try:
+            run(driver)
+        except FinishedException as e:
+            print "Actually won (or forfeited)"
+            won = e.won
+        except Exception as e:
+            print traceback.format_exc()
+            won = False
+        f.write(str(won)+"\t"+driver.current_url+"\n")
+        f.flush()

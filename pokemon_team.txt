@@ -38,7 +38,7 @@ bot5 (Clefable) @ Leftovers
 Ability: Unaware
 EVs: 252 HP / 252 Def / 4 SpD
 Bold Nature
-- Calm Mind
+- Moonlight
 - Stored Power
 - Moonblast
 - Substitute

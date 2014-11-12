@@ -81,7 +81,7 @@ def switch_poke(poke):
     wait_for_move()
 
 def make_move(move):
-    if move == "Taunt" or move == "Calm Mind"  or move == "Dark Void"  or move == "Earthquake" or move == "Morning Sun":
+    if move == "Taunt" or move == "Moonlight"  or move == "Dark Void"  or move == "Earthquake" or move == "Morning Sun":
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[1]")
         move.click()
     elif move == "Geomancy" or move == "Reversal"  or move == "Stored Power"  or move == "Knock Off":
@@ -137,7 +137,7 @@ def get_opp_poke(oppTeam):
             biggestPoke = i
     return biggestPoke.lower().strip()
 '''
-def get_opp_poke(oppTeam):
+def get_opp_poke():
     img = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[4]/div[1]/img[6]")
     text = img.get_attribute('src')
     back = text.rindex('.')
@@ -270,13 +270,13 @@ def run(driver):
             break
     print "switching to diglett"
     switch_poke("Diglett")
-    opp_poke = get_opp_poke(opp_team)
+    opp_poke = get_opp_poke()
     log = get_log()
     if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus" or opp_poke == "absol-mega":
         print "i see threat, will use earthquake"
         while opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
             make_move("Earthquake")
-            opp_poke = get_opp_poke(opp_team)
+            opp_poke = get_opp_poke()
             log = get_log()
             if "bot2 fainted" in log:
                 print "Diglett fainted"
@@ -285,13 +285,13 @@ def run(driver):
         make_move("Memento")
     print "switching to dugtrio"
     switch_poke("Dugtrio")
-    opp_poke = get_opp_poke(opp_team)
+    opp_poke = get_opp_poke()
     log = get_log()
     if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus" or opp_poke == "absol-mega":
         print "i see threat, will use earthquake"
         while opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
             make_move("Earthquake")
-            opp_poke = get_opp_poke(opp_team)
+            opp_poke = get_opp_poke()
             log = get_log()
             if "bot3 fainted" in log:
                 print "Dugtrio fainted"
@@ -307,7 +307,7 @@ def run(driver):
         print "smeargle fainted darn"
         raise FinishedException(False)
     log = get_log()
-    if get_opp_poke(opp_team) in threats:
+    if get_opp_poke() in threats:
         print "i see threat"
         make_move("Dark Void")
         log = get_log()
@@ -328,16 +328,48 @@ def run(driver):
         print "hello there's a darkthreat in their team"
         switch_poke("Clefable")
         make_move("Substitute")
+        subcount = 0
         while True:
-            print get_opp_poke(opp_team)
-            if get_opp_poke(opp_team) not in darkpokes:
-                print "this is not a dark poke"
-                make_move("Stored Power")
-                wait_for_move();
+            log = get_log()
+            if "bot5 fainted" in log:
+                print "clefable fainted darn"
+                raise FinishedException(False)
+            sub = check_sub()
+            hp = get_hp()
+            if(sub):
+                while(sub):
+                    subcount += 1
+                    print get_opp_poke()
+                    hp = get_hp()
+                    if get_opp_poke() not in darkpokes or get_opp_poke() == "gyarados":
+                        print "this is not a dark poke"
+                        print "my hp is " + str(hp)
+                        if hp < 50:
+                            make_move("Moonlight")
+                        else:
+                            make_move("Stored Power")
+                    else:
+                        print "this is a dark poke"
+                        print "my hp is " + str(hp)
+                        if hp < 50:
+                            make_move("Moonlight")
+                        else:
+                            make_move("Moonblast")
+                    sub = check_sub()
+            elif sub == False and hp > 50:
+                if subcount > 0:
+                    make_move("Substitute")
+                else:
+                    curr_opp_poke = get_opp_poke()
+                    if get_opp_poke() not in darkpokes or get_opp_poke() == "gyarados":
+                        make_move("Stored Power")
+                    else:
+                        make_move("Moonblast")
+                    if get_opp_poke() != curr_opp_poke:
+                        make_move("Substitute")
+                subcount = 0
             else:
-                print "this is a dark poke"
-                make_move("Moonblast")
-                wait_for_move();
+                make_move("Moonlight")
 
     else:
         switch_poke("Espeon")
@@ -356,9 +388,9 @@ def run(driver):
             if(sub):
                 while(sub):
                     subcount += 1
-                    print get_opp_poke(opp_team)
+                    print get_opp_poke()
                     hp = get_hp()
-                    if get_opp_poke(opp_team) not in darkpokes or get_opp_poke(opp_team) == "gyarados":
+                    if get_opp_poke() not in darkpokes or get_opp_poke() == "gyarados":
                         print "this is not a dark poke"
                         print "my hp is " + str(hp)
                         if hp < 50:
@@ -378,7 +410,7 @@ def run(driver):
                     make_move("Substitute")
                 else:
                     curr_opp_poke = get_opp_poke()
-                    if get_opp_poke(opp_team) not in darkpokes or get_opp_poke(opp_team) == "gyarados":
+                    if get_opp_poke() not in darkpokes or get_opp_poke() == "gyarados":
                         make_move("Stored Power")
                     else:
                         make_move("Hidden Power Fighting")

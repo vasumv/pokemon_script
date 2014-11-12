@@ -1,0 +1,1 @@
+Hello! This is a bot designed by onmabd that will play against you and gather data. If it leaves the round, could you please upload the replay so that we can see if it crashed? Thanks!

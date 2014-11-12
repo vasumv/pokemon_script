@@ -13,7 +13,7 @@ f3 = open("/home/vasu/Work/pokemon_stuff/threats.txt")
 threats = f3.read()
 f4 = open("/home/vasu/Work/pokemon_stuff/darkthreats.txt")
 dark_threats = f4.read()
-username = "asdf5556"
+username = "asdf6000"
 
 def login(username):
     time.sleep(1)
@@ -188,6 +188,17 @@ def start_timer():
         if timer.text == "Start timer":
             timer.click()
 
+def turn_off_sound():
+    sound = driver.find_element_by_xpath("//*[@id='header']/div[3]/button[2]")
+    sound.click()
+    mute = driver.find_element_by_xpath("/html/body/div[4]/p[3]/label/input")
+    mute.click()
+
+def chat(message):
+    chatbox = driver.find_element_by_xpath("/html/body/div[4]/div[4]/form/textarea[2]")
+    chatbox.send_keys(message)
+    chatbox.send_keys(Keys.RETURN)
+
 def check_taunt():
     return None
 
@@ -217,15 +228,16 @@ def run(driver):
     driver.get(url)
     login(username)
     start_battle()
-    time.sleep(10)
+    time.sleep(5)
+    with open("introchat.txt", "r") as f5:
+        hellomessage = f5.read()
+        chat(hellomessage)
     opponent_team = get_team()
     opp_team = [x.encode('ascii','ignore').strip() for x in opponent_team]
     print opp_team
     player = get_player_number()
     print "i am player " + str(player)
     switch_poke("Sableye")
-    x = check_sub()
-    print x
     print "used taunt"
     make_move("Taunt")
     #taunt = check_taunt()
@@ -260,7 +272,7 @@ def run(driver):
     switch_poke("Diglett")
     opp_poke = get_opp_poke(opp_team)
     log = get_log()
-    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
+    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus" or opp_poke == "absol-mega":
         print "i see threat, will use earthquake"
         while opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
             make_move("Earthquake")
@@ -275,7 +287,7 @@ def run(driver):
     switch_poke("Dugtrio")
     opp_poke = get_opp_poke(opp_team)
     log = get_log()
-    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
+    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus" or opp_poke == "absol-mega":
         print "i see threat, will use earthquake"
         while opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
             make_move("Earthquake")
@@ -292,6 +304,7 @@ def run(driver):
     print "using Geomancy"
     log = get_log()
     if "bot4 fainted" in log:
+        print "smeargle fainted darn"
         raise FinishedException(False)
     log = get_log()
     if get_opp_poke(opp_team) in threats:
@@ -302,11 +315,13 @@ def run(driver):
     print "using cotton guard"
     log = get_log()
     if "bot4 fainted" in log:
+        print "smeargle fainted darn"
         raise FinishedException(False)
     make_move("Baton Pass")
     print "using baton pass"
     log = get_log()
     if "bot4 fainted" in log:
+        print "smeargle fainted darn"
         raise FinishedException(False)
 
     if any(x in dark_threats for x in opp_team):
@@ -328,37 +343,19 @@ def run(driver):
         switch_poke("Espeon")
         hp = get_hp()
         log = get_log()
+        subcount = 0
         make_move("Substitute")
-
-        '''
-        FINAL LOGIC: UNFINISHED
-        while True:
-            while hp > 40:
-                if check_sub() == False:
-                    make_move("Substitute")
-                    time.sleep(3)
-                    if check_sub() == True:
-                        if get_opp_poke(opp_team) not in darkpokes:
-                            make_move("Stored Power")
-                        else:
-                            make_move("Hidden Power Fighting")
-                    else:
-                else:
-                    if get_opp_poke(opp_team) not in darkpokes:
-                        make_move("Stored Power")
-                    else:
-                        make_move("Hidden Power Fighting")
-            '''
         #TEST LOGIC:
         while True:
             log = get_log()
             if "bot6 fainted" in log:
+                print "espeon fainted darn"
                 raise FinishedException(False)
             sub = check_sub()
-            print "sub is up: " + str(sub)
             hp = get_hp()
             if(sub):
                 while(sub):
+                    subcount += 1
                     print get_opp_poke(opp_team)
                     hp = get_hp()
                     if get_opp_poke(opp_team) not in darkpokes or get_opp_poke(opp_team) == "gyarados":
@@ -377,22 +374,26 @@ def run(driver):
                             make_move("Hidden Power Fighting")
                     sub = check_sub()
             elif sub == False and hp > 50:
-                if get_opp_poke(opp_team) == "chansey" or get_opp_poke(opp_team) == "gengar" or get_opp_poke(opp_team) == "garchomp-mega" or get_opp_poke(opp_team) == "raikou" or get_opp_poke(opp_team) == "alakazam" or get_opp_poke == "alakazam-mega" or get_opp_poke == "darmanitan" or get_opp_poke == "landorus" or get_opp_poke(opp_team) == "hydreigon":
-                    make_move("Stored Power")
-                elif get_opp_poke(opp_team) == "bisharp" or get_opp_poke(opp_team) == "tyranitar" or get_opp_poke(opp_team) == "tyranitar-mega" or get_opp_poke(opp_team) == "weavile" or get_opp_poke(opp_team) == "crawdaunt" or get_opp_poke(opp_team) == "greninja":
-                    make_move("Hidden Power Fighting")
-                else:
+                if subcount > 0:
                     make_move("Substitute")
-            else:
-                if get_opp_poke(opp_team) == "tyranitar" or get_opp_poke(opp_team) == "tyranitar-mega":
-                    make_move("Hidden Power Fighting")
                 else:
-                    make_move("Morning Sun")
+                    curr_opp_poke = get_opp_poke()
+                    if get_opp_poke(opp_team) not in darkpokes or get_opp_poke(opp_team) == "gyarados":
+                        make_move("Stored Power")
+                    else:
+                        make_move("Hidden Power Fighting")
+                    if get_opp_poke() != curr_opp_poke:
+                        make_move("Substitute")
+                subcount = 0
+            else:
+                make_move("Morning Sun")
+
 driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)
+turn_off_sound()
 login(username)
 make_team(team)
-with open("asdf5556wins", "a") as f:
+with open("asdf6000wins", "a") as f:
     while True:
         try:
             run(driver)

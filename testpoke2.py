@@ -377,14 +377,17 @@ def run(driver):
                             make_move("Hidden Power Fighting")
                     sub = check_sub()
             elif sub == False and hp > 50:
-                if get_opp_poke(opp_team) == "chansey" or get_opp_poke(opp_team) == "gengar":
+                if get_opp_poke(opp_team) == "chansey" or get_opp_poke(opp_team) == "gengar" or get_opp_poke(opp_team) == "garchomp-mega" or get_opp_poke(opp_team) == "raikou" or get_opp_poke(opp_team) == "alakazam" or get_opp_poke == "alakazam-mega" or get_opp_poke == "darmanitan" or get_opp_poke == "landorus" or get_opp_poke(opp_team) == "hydreigon":
                     make_move("Stored Power")
                 elif get_opp_poke(opp_team) == "bisharp" or get_opp_poke(opp_team) == "tyranitar" or get_opp_poke(opp_team) == "tyranitar-mega" or get_opp_poke(opp_team) == "weavile" or get_opp_poke(opp_team) == "crawdaunt" or get_opp_poke(opp_team) == "greninja":
                     make_move("Hidden Power Fighting")
                 else:
                     make_move("Substitute")
             else:
-                make_move("Morning Sun")
+                if get_opp_poke(opp_team) == "tyranitar" or get_opp_poke(opp_team) == "tyranitar-mega":
+                    make_move("Hidden Power Fighting")
+                else:
+                    make_move("Morning Sun")
 driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)
 login(username)

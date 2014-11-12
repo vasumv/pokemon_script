@@ -35,3 +35,7 @@ chesnaught
 pinsir
 pinsir-mega
 bisharp
+skarmory
+mew
+shuckle
+staraptor

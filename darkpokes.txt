@@ -1,16 +1,10 @@
-
-all
-national
-game/black-white-2
-game/black-white
-all#dark
 gyarados
 umbreon
 murkrow
 sneasel
 houndour
 houndoom
-houndoom
+houndoom-mega
 tyranitar
 tyranitar
 poochyena

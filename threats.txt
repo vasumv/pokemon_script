@@ -44,3 +44,7 @@ shuckle
 staraptor
 typhlosion
 unfezant
+jirachi
+togekiss
+ferrothorn
+scrafty

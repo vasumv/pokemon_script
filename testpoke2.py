@@ -52,6 +52,25 @@ def start_battle():
     ou.click()
     battle = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[3]/button")
     battle.click()
+    #challenge chris:
+    #lobby = driver.find_element_by_xpath("/html/body/div[3]/div/div/div[1]/a") lobby.click()
+    #time.sleep(2)
+    #usav = driver.find_element_by_xpath("//*[@id='lobby-userlist-user-usavisfat']/button/span")
+    #usav.click()
+    #time.sleep(2)
+    #challenge = driver.find_element_by_xpath("/html/body/div[5]/p/button[1]")
+    #challenge.click()
+    #form = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[1]/div/div[1]/div[1]/form/p[2]/button")
+    #form.click()
+    #time.sleep(2)
+    #ou = driver.find_element_by_xpath("/html/body/div[5]/ul[1]/li[3]/button")
+    #ou.click()
+    #time.sleep(2)
+    #make_challenge = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[1]/div/div[1]/div[1]/form/p[4]/button[1]")
+    #make_challenge.click()
+    #lobby_quit = driver.find_element_by_xpath("//*[@id='header']/div[2]/div/ul[2]/li[1]/a[2]")
+    #lobby_quit.click()
+
     while url1 == driver.current_url:
         time.sleep(1.5)
         print "waiting"
@@ -113,6 +132,13 @@ def get_hp():
     else:
         hp = 0
     return hp
+
+def get_weather():
+    if check_exists_by_xpath("/html/body/div[4]/div[1]/div/div[2]"):
+        weather = driver.find_element_by_xpath("/html/body/div[4]/div[1]/div/div[2]")
+        return weather.text
+    else:
+        return "none"
 
 def get_log():
      log = driver.find_element_by_xpath("/html/body/div[4]/div[3]/div[1]")
@@ -200,7 +226,12 @@ def chat(message):
     chatbox.send_keys(Keys.RETURN)
 
 def check_taunt():
-    return None
+    bad = driver.find_elements_by_class_name("bad")
+    bad_text = [x.text for x in bad]
+    if "Taunt" in bad_text:
+        return True
+    else:
+        return False
 
 class FinishedException(Exception):
     def __init__(self, won):
@@ -221,7 +252,7 @@ def wait_for_move():
             save_replay.click()
             time.sleep(10)
             raise FinishedException(True)
-
+    time.sleep(3)
     print "their move just ended"
 
 def run(driver):
@@ -234,40 +265,52 @@ def run(driver):
         chat(hellomessage)
     opponent_team = get_team()
     opp_team = [x.encode('ascii','ignore').strip() for x in opponent_team]
-    print opp_team
     player = get_player_number()
     print "i am player " + str(player)
+    wait_for_move()
     switch_poke("Sableye")
     print "used taunt"
     make_move("Taunt")
-    #taunt = check_taunt()
-    #print "Taunt is " + taunt
+    taunt = check_taunt()
     time.sleep(5)
     curr_hp = get_hp()
     print curr_hp
     if curr_hp > 60:
         while curr_hp > 60:
-            print "used knock off"
-            make_move("Knock Off")
-            curr_hp = get_hp()
-            print curr_hp
+            taunt = check_taunt()
+            if taunt:
+                print "used knock off"
+                make_move("Knock Off")
+                curr_hp = get_hp()
+                print curr_hp
+            else:
+                make_move("Taunt")
+                curr_hp = get_hp()
             log = get_log()
             if curr_hp == 0 and "bot1 fainted" in log:
                 print "Sableye fainted"
                 break
+            taunt = check_taunt()
     log = get_log();
-    if "bot1 fainted" not in log:
-        wait_for_move()
-        make_move("Gravity")
+    taunt = check_taunt()
+    while "bot1 fainted" not in log:
+        if taunt:
+            make_move("Gravity")
+            break
+        else:
+            make_move("Taunt")
+            taunt = check_taunt()
+        log = get_log()
     time.sleep(5)
-    while curr_hp > 0 or "bot1 fainted" not in log:
-        print "used taunt"
-        make_move("Taunt")
+    while "bot1 fainted" not in log:
+        taunt = check_taunt()
+        if taunt:
+            make_move("Knock Off")
+        else:
+            make_move("Taunt")
+        taunt = check_taunt()
         curr_hp = get_hp()
         log = get_log()
-        if "bot1 fainted" in log:
-            print "Sableye fainted"
-            break
     print "switching to diglett"
     switch_poke("Diglett")
     opp_poke = get_opp_poke()
@@ -405,7 +448,7 @@ def run(driver):
                         else:
                             make_move("Hidden Power Fighting")
                     sub = check_sub()
-            elif sub == False and hp > 50:
+            elif sub == False and hp > 50 and "Rain" not in get_weather() and "Sandstorm" not in get_weather():
                 if subcount > 0:
                     make_move("Substitute")
                 else:
@@ -417,14 +460,21 @@ def run(driver):
                     if get_opp_poke() != curr_opp_poke:
                         make_move("Substitute")
                 subcount = 0
-            else:
+            elif hp <= 50 and "Rain" not in get_weather() and "Sandstorm" not in get_weather():
                 make_move("Morning Sun")
+            else:
+                if get_opp_poke() not in darkpokes or get_opp_poke() == "gyarados":
+                    make_move("Stored Power")
+                else:
+                    make_move("Hidden Power Fighting")
+
 
 driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)
 turn_off_sound()
 login(username)
 make_team(team)
+run(driver)
 with open("asdf6000wins", "a") as f:
     while True:
         try:

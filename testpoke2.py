@@ -17,6 +17,12 @@ username = "asdf6000"
 
 def login(username):
     time.sleep(1)
+    button = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[2]/div[1]/form/p[1]/button")
+    text = button.text
+    if text != "Random Battle":
+        while text != "Random Battle":
+            time.sleep(2)
+            text = button.text
     elem = driver.find_element_by_name("login")
     elem.click()
     time.sleep(1)
@@ -24,10 +30,6 @@ def login(username):
     user.send_keys(username)
     user.send_keys(Keys.RETURN)
     time.sleep(1)
-
-def off_sound():
-    sound = driver.find_element_by_xpath("/html/body/div[6]/p[3]/label/input")
-    sound.click()
 
 def make_team(team):
     builder = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[2]/p[1]/button")
@@ -53,9 +55,10 @@ def start_battle():
     battle = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[3]/button")
     battle.click()
     #challenge chris:
-    #lobby = driver.find_element_by_xpath("/html/body/div[3]/div/div/div[1]/a") lobby.click()
+    #lobby = driver.find_element_by_xpath("/html/body/div[3]/div/div/div[1]/a")
+    #lobby.click()
     #time.sleep(2)
-    #usav = driver.find_element_by_xpath("//*[@id='lobby-userlist-user-usavisfat']/button/span")
+    #usav = driver.find_element_by_xpath("//*[@id='lobby-userlist-user-onmabd']/button/span")
     #usav.click()
     #time.sleep(2)
     #challenge = driver.find_element_by_xpath("/html/body/div[5]/p/button[1]")
@@ -112,6 +115,7 @@ def make_move(move):
     elif move == "Memento" or move == "Will-O-Wisp"  or move == "Substitute"  or move == "Cotton Guard":
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]")
         move.click()
+    log = get_log()
     time.sleep(2)
     start_timer()
     wait_for_move()
@@ -143,6 +147,10 @@ def get_weather():
 def get_log():
      log = driver.find_element_by_xpath("/html/body/div[4]/div[3]/div[1]")
      return log.text
+
+def get_ditto():
+    transformed = check_exists_by_xpath("/html/body/div[5]/div[1]/div/div[5]/div[1]/div/div[4]/span")
+    return transformed
 
 def get_player_number():
     player = driver.find_element_by_xpath("/html/body/div[4]/div[3]/div[1]/div[1]/small")
@@ -233,6 +241,15 @@ def check_taunt():
     else:
         return False
 
+def check_toxic():
+    status = driver.find_elements_by_class_name("status")
+    status_text = [x.text for x in status]
+    print status_text
+    if any("TOX" in x for x in status_text):
+        return True
+    else:
+        return False
+
 class FinishedException(Exception):
     def __init__(self, won):
         self.won = won
@@ -272,6 +289,8 @@ def run(driver):
     print "used taunt"
     make_move("Taunt")
     taunt = check_taunt()
+    tox = check_toxic()
+    print "tox: " + str(tox)
     time.sleep(5)
     curr_hp = get_hp()
     print curr_hp
@@ -296,6 +315,7 @@ def run(driver):
     while "bot1 fainted" not in log:
         if taunt:
             make_move("Gravity")
+            log = get_log()
             break
         else:
             make_move("Taunt")
@@ -315,7 +335,7 @@ def run(driver):
     switch_poke("Diglett")
     opp_poke = get_opp_poke()
     log = get_log()
-    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus" or opp_poke == "absol-mega":
+    if opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus" or opp_poke == "absol-mega" or opp_poke == "lucario":
         print "i see threat, will use earthquake"
         while opp_poke == "terrakion" or opp_poke == "bisharp" or opp_poke == "thundurus":
             make_move("Earthquake")
@@ -342,19 +362,33 @@ def run(driver):
     if "bot3 fainted" not in log:
         make_move("Memento")
     print "switching to smeargle"
+    sleep = 0
     switch_poke("Smeargle")
-    make_move("Geomancy")
+    if get_opp_poke() in threats:
+        print "i see threat"
+        make_move("Dark Void")
+        sleep = 1
+        log = get_log()
+    if ("Sandstorm" in get_weather() and "Excadrill" in opp_team) or ("Talonflame" in opp_team and get_opp_poke() != "talonflame"):
+        geo = 0
+        make_move("Cotton Guard")
+    else:
+        geo = 1
+        make_move("Geomancy")
     print "using Geomancy"
     log = get_log()
     if "bot4 fainted" in log:
         print "smeargle fainted darn"
         raise FinishedException(False)
     log = get_log()
-    if get_opp_poke() in threats:
+    if get_opp_poke() in threats and sleep != 1:
         print "i see threat"
         make_move("Dark Void")
         log = get_log()
-    make_move("Cotton Guard")
+    if geo == 1:
+        make_move("Cotton Guard")
+    else:
+        make_move("Geomancy")
     print "using cotton guard"
     log = get_log()
     if "bot4 fainted" in log:
@@ -366,7 +400,6 @@ def run(driver):
     if "bot4 fainted" in log:
         print "smeargle fainted darn"
         raise FinishedException(False)
-
     if any(x in dark_threats for x in opp_team):
         print "hello there's a darkthreat in their team"
         switch_poke("Clefable")
@@ -449,7 +482,7 @@ def run(driver):
                             make_move("Hidden Power Fighting")
                     sub = check_sub()
             elif sub == False and hp > 50 and "Rain" not in get_weather() and "Sandstorm" not in get_weather():
-                if subcount > 0:
+                if subcount > 0 and get_opp_poke() != "talonflame":
                     make_move("Substitute")
                 else:
                     curr_opp_poke = get_opp_poke()
@@ -460,7 +493,7 @@ def run(driver):
                     if get_opp_poke() != curr_opp_poke:
                         make_move("Substitute")
                 subcount = 0
-            elif hp <= 50 and "Rain" not in get_weather() and "Sandstorm" not in get_weather():
+            elif hp <= 50 and "Rain" not in get_weather() and "Sandstorm" not in get_weather() and get_opp_poke != "metagross-mega":
                 make_move("Morning Sun")
             else:
                 if get_opp_poke() not in darkpokes or get_opp_poke() == "gyarados":
@@ -474,10 +507,10 @@ driver.get(url)
 turn_off_sound()
 login(username)
 make_team(team)
-run(driver)
 with open("asdf6000wins", "a") as f:
     while True:
         try:
+            time.sleep(2)
             run(driver)
         except FinishedException as e:
             print "Actually won (or smeargle/espeon died)"
@@ -485,5 +518,6 @@ with open("asdf6000wins", "a") as f:
         except Exception as e:
             print traceback.format_exc()
             won = False
+        chat("gg")
         f.write(str(won)+"\t"+driver.current_url+"\n")
         f.flush()

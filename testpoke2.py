@@ -115,11 +115,16 @@ def make_move(move):
     elif move == "Memento" or move == "Will-O-Wisp"  or move == "Substitute"  or move == "Cotton Guard":
         move = driver.find_element_by_xpath("/html/body/div[4]/div[5]/div/div[2]/div[2]/button[4]")
         move.click()
-    log = get_log()
     time.sleep(2)
     start_timer()
     wait_for_move()
+    log = get_log()
     time.sleep(3)
+    if log.count("flinched!") > flinch_count:
+        global flinch_count
+        flinch_count += 1
+        make_move(move)
+    return 0
 
 def get_team():
     team = driver.find_element_by_xpath("/html/body/div[4]/div[3]/div[1]/div[15]/em")
@@ -511,6 +516,7 @@ with open("asdf6000wins", "a") as f:
     while True:
         try:
             time.sleep(2)
+            flinch_count = 0
             run(driver)
         except FinishedException as e:
             print "Actually won (or smeargle/espeon died)"

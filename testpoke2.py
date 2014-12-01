@@ -3,6 +3,7 @@ import time
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+flinch_count = 0
 chromePath = "/home/vasu/Downloads/chromedriver"
 url = "http://play.pokemonshowdown.com"
 f = open("/home/vasu/Work/pokemon_stuff/pokemon_team.txt")
@@ -121,6 +122,7 @@ def make_move(move):
     log = get_log()
     time.sleep(3)
     if log.count("flinched!") > flinch_count:
+        print "i got flinched!"
         global flinch_count
         flinch_count += 1
         make_move(move)
@@ -505,7 +507,6 @@ def run(driver):
                     make_move("Stored Power")
                 else:
                     make_move("Hidden Power Fighting")
-
 
 driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)

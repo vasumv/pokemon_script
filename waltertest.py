@@ -6,17 +6,18 @@ from selenium.webdriver.common.keys import Keys
 flinch_count = 0
 chromePath = "/home/vasu/Downloads/chromedriver"
 url = "http://play.pokemonshowdown.com"
-f = open("/home/vasu/Work/pokemon_stuff/pokemon_team.txt")
+f = open("pokemon_team.txt")
 team = f.read()
-f2 = open("/home/vasu/Work/pokemon_stuff/darkpokes.txt")
+f2 = open("darkpokes.txt")
 darkpokes = f2.read()
-f3 = open("/home/vasu/Work/pokemon_stuff/threats.txt")
+f3 = open("threats.txt")
 threats = f3.read()
-f4 = open("/home/vasu/Work/pokemon_stuff/darkthreats.txt")
+f4 = open("darkthreats.txt")
 dark_threats = f4.read()
 username = "asdf6000"
+password = "seleniumpython"
 
-def login(username):
+def login(username, password):
     time.sleep(1)
     #button = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[2]/div[1]/form/p[1]/button")
     #text = button.text
@@ -30,6 +31,10 @@ def login(username):
     user = driver.find_element_by_name("username")
     user.send_keys(username)
     user.send_keys(Keys.RETURN)
+    time.sleep(2)
+    passwd = driver.find_element_by_xpath("/html/body/div[4]/div/form/p[4]/label/input")
+    passwd.send_keys(password)
+    passwd.send_keys(Keys.RETURN)
     time.sleep(1)
 
 def make_team(team):
@@ -49,30 +54,32 @@ def make_team(team):
 
 def start_battle():
     url1 = driver.current_url
-    #form = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[1]/button") form.click()
-    #ou = driver.find_element_by_xpath("/html/body/div[4]/ul[1]/li[4]/button")
-    #ou.click()
-    #battle = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[3]/button")
-    #battle.click()
-    #challenge chris:
-    lobby = driver.find_element_by_xpath("/html/body/div[3]/div/div/div[1]/a")
-    lobby.click()
-    time.sleep(2)
-    usav = driver.find_element_by_xpath("//*[@id='lobby-userlist-user-usavisfat']/button/span")
-    usav.click()
-    time.sleep(2)
-    challenge = driver.find_element_by_xpath("/html/body/div[5]/p/button[1]")
-    challenge.click()
-    form = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[1]/div/div[1]/div[1]/form/p[2]/button")
+    time.sleep(5)
+    form = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[1]/button")
     form.click()
-    time.sleep(2)
-    ou = driver.find_element_by_xpath("/html/body/div[5]/ul[1]/li[3]/button")
+    ou = driver.find_element_by_xpath("/html/body/div[4]/ul[1]/li[4]/button")
     ou.click()
-    time.sleep(2)
-    make_challenge = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[1]/div/div[1]/div[1]/form/p[4]/button[1]")
-    make_challenge.click()
-    lobby_quit = driver.find_element_by_xpath("//*[@id='header']/div[2]/div/ul[2]/li[1]/a[2]")
-    lobby_quit.click()
+    battle = driver.find_element_by_xpath("/html/body/div[2]/div/div[1]/div[2]/div[1]/form/p[3]/button")
+    battle.click()
+    #challenge chris:
+    #lobby = driver.find_element_by_xpath("/html/body/div[3]/div/div/div[1]/a")
+    #lobby.click()
+    #time.sleep(2)
+    #usav = driver.find_element_by_xpath("//*[@id='lobby-userlist-user-usavisfat']/button/span")
+    #usav.click()
+    #time.sleep(2)
+    #challenge = driver.find_element_by_xpath("/html/body/div[5]/p/button[1]")
+    #challenge.click()
+    #form = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[1]/div/div[1]/div[1]/form/p[2]/button")
+    #form.click()
+    #time.sleep(2)
+    #ou = driver.find_element_by_xpath("/html/body/div[5]/ul[1]/li[3]/button")
+    #ou.click()
+    #time.sleep(2)
+    #make_challenge = driver.find_element_by_xpath("//*[@id='mainmenu']/div/div[1]/div[1]/div/div[1]/div[1]/form/p[4]/button[1]")
+    #make_challenge.click()
+    #lobby_quit = driver.find_element_by_xpath("//*[@id='header']/div[2]/div/ul[2]/li[1]/a[2]")
+    #lobby_quit.click()
 
     while url1 == driver.current_url:
         time.sleep(1.5)
@@ -269,14 +276,13 @@ def wait_for_move():
 
 def run(driver):
     driver.get(url)
-    login(username)
     start_battle()
     time.sleep(5)
     with open("introchat.txt", "r") as f5:
         hellomessage = f5.read()
         chat(hellomessage)
-    #opponent_team = get_team()
-    #opp_team = [x.encode('ascii','ignore').strip() for x in opponent_team]
+    opponent_team = get_team()
+    opp_team = [x.encode('ascii','ignore').strip() for x in opponent_team]
     player = get_player_number()
     print "i am player " + str(player)
     wait_for_move()
@@ -447,7 +453,6 @@ def run(driver):
         hp = get_hp()
         log = get_log()
         subcount = 0
-        make_move("Substitute")
         #TEST LOGIC:
         while True:
             log = get_log()
@@ -477,7 +482,7 @@ def run(driver):
                             make_move("Hidden Power Fighting")
                     sub = check_sub()
             elif sub == False and hp > 50 and "Rain" not in get_weather() and "Sandstorm" not in get_weather():
-                if subcount > 0 and get_opp_poke() != "talonflame":
+                if subcount > 0 and get_opp_poke() != "talonflame" and check_toxic() != True:
                     make_move("Substitute")
                 else:
                     curr_opp_poke = get_opp_poke()
@@ -499,21 +504,20 @@ def run(driver):
 driver = webdriver.Chrome(executable_path=chromePath)
 driver.get(url)
 turn_off_sound()
-login(username)
+login(username, password)
 make_team(team)
-run(driver)
-#with open("asdf6000wins", "a") as f:
-    #while True:
-        #try:
-            #time.sleep(2)
-            #flinch_count = 0
-            #run(driver)
-        #except FinishedException as e:
-            #print "Actually won (or smeargle/espeon died)"
-            #won = e.won
-        #except Exception as e:
-            #print traceback.format_exc()
-            #won = False
-        #chat("gg")
-        #f.write(str(won)+"\t"+driver.current_url+"\n")
-        #f.flush()
+with open("asdf6000wins", "a") as f:
+    while True:
+        try:
+            time.sleep(2)
+            flinch_count = 0
+            run(driver)
+        except FinishedException as e:
+            print "Actually won (or smeargle/espeon died)"
+            won = e.won
+        except Exception as e:
+            print traceback.format_exc()
+            won = False
+        chat("gg")
+        f.write(str(won)+"\t"+driver.current_url+"\n")
+        f.flush()

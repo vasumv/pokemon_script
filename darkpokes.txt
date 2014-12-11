@@ -50,3 +50,4 @@ tyranitar-mega
 absol-mega
 sharpedo-mega
 gyarados-mega
+sableye-mega
